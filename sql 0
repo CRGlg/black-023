@@ -1,0 +1,62 @@
+CREATE TABLE Empresa (
+    CodigoEmpresa INT PRIMARY KEY,
+    NomeEmpresa VARCHAR(255),
+    LocalizacaoEmpresa VARCHAR(255),
+    CNPJ integer
+);
+INSERT INTO Empresa (CodigoEmpresa, NomeEmpresa, LocalizacaoEmpresa, CNPJ) VALUES (1, 'Minha Empresa', 'Localizacao1','ID');
+
+CREATE TABLE Departamento (
+    CodigoDepartamento INT PRIMARY KEY,
+    NomeDepartamento VARCHAR(255),
+    Localizacao VARCHAR(255),
+    CodigoEmpresa INT,
+    FOREIGN KEY (CodigoEmpresa) REFERENCES Empresa(CodigoEmpresa)
+);
+INSERT INTO Departamento (CodigoDepartamento, NomeDepartamento, Localizacao, CodigoEmpresa) VALUES (1, 'RH', 'Localizacao2', 1);
+
+CREATE TABLE Cargo (
+    CodigoCargo INT PRIMARY KEY,
+    NomeCargo VARCHAR(255),
+    SalarioBase DECIMAL(10, 2) 
+);
+INSERT INTO Cargo (CodigoCargo, NomeCargo, SalarioBase) VALUES (1, 'Gerente', 5000.00);
+
+CREATE TABLE Habilidade (
+    CodigoHabilidade INT PRIMARY KEY,
+    DescricaoHabilidade VARCHAR(255)
+);
+INSERT INTO Habilidade (CodigoHabilidade, DescricaoHabilidade) VALUES (1, 'Comunicação');
+
+CREATE TABLE Funcionario (
+    Matricula INT PRIMARY KEY,
+    NomeFuncionario VARCHAR(255),
+    Endereco VARCHAR(255),
+    DataAdmissao DATE,
+    CodigoCargo INT,
+    CodigoDepartamento INT,
+    SalarioAtual DECIMAL(5, 2), 
+    FOREIGN KEY (CodigoCargo) REFERENCES Cargo(CodigoCargo),
+    FOREIGN KEY (CodigoDepartamento) REFERENCES Departamento(CodigoDepartamento)
+);
+INSERT INTO Funcionario (Matricula, NomeFuncionario, Endereco, DataAdmissao, CodigoCargo, CodigoDepartamento, SalarioAtual) VALUES (101, 'João', 'Endereco1', '2023-01-01', 1, 1, 5000.00);
+
+
+CREATE TABLE Dependente (
+    NomeDependente VARCHAR(255),
+    DataNascimento DATE,
+    MatriculaFuncionario INT,
+    PRIMARY KEY (NomeDependente, MatriculaFuncionario),
+    FOREIGN KEY (MatriculaFuncionario) REFERENCES Funcionario(Matricula)
+);
+INSERT INTO Dependente (NomeDependente, DataNascimento, MatriculaFuncionario) VALUES ('Filho1', '2010-01-01', 101);
+
+
+CREATE TABLE CargoHabilidade (
+    CodigoCargo INT,
+    CodigoHabilidade INT,
+    PRIMARY KEY (CodigoCargo, CodigoHabilidade),
+    FOREIGN KEY (CodigoCargo) REFERENCES Cargo(CodigoCargo),
+    FOREIGN KEY (CodigoHabilidade) REFERENCES Habilidade(CodigoHabilidade)
+);
+INSERT INTO CargoHabilidade (CodigoCargo, CodigoHabilidade) VALUES (1, 1);
