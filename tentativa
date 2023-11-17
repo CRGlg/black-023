@@ -1,0 +1,256 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Windows.Forms;
+using System.Text.Json;
+
+namespace Blocos_TXT
+{
+    public class Bloco
+    {
+        public string Codigo { get; set; }
+        public string Numero { get; set; }
+        public string Medidas { get; set; }
+        public string Descricao { get; set; }
+        public string TipoMaterial { get; set; }
+        public string ValorCompra { get; set; }
+        public string ValorVenda { get; set; }
+        public string Pedreira { get; set; }
+    }
+
+    public partial class Form1 : Form
+    {
+        private List<Bloco> blocos;
+
+     
+        public Form1()
+        {
+            InitializeComponent();
+            blocos = new List<Bloco>();
+        }
+
+        private void Form1_Click(object sender, EventArgs e)
+        {
+
+            try
+            {
+                StreamWriter address = new StreamWriter(@"c:\temp\arquivo.txt");
+                address.WriteLine(textBox1.Text, textBox2.Text, textBox3.Text,textBox4.Text,textBox5.Text, textBox6.Text, textBox7.Text, textBox8.Text);
+                address.Close();
+            }
+            catch (DirectoryNotFoundException exc)
+            {
+                MessageBox.Show("Ocorreu um errro no processo!");
+            }
+            ;
+        }
+
+        private void InitializeComponent()
+        {
+            
+
+            label1 = new Label();
+            label1.Text = "Código";
+            label1.Location = new System.Drawing.Point(10, 10);
+            this.Controls.Add(label1);
+
+            textBox1 = new TextBox();
+            textBox1.Location = new System.Drawing.Point(150, 10);
+            this.Controls.Add(textBox1);
+
+            label2 = new Label();
+            label2.Text = "Número do Bloco";
+            label2.Location = new System.Drawing.Point(10, 40);
+            this.Controls.Add(label2);
+
+            textBox2 = new TextBox();
+            textBox2.Location = new System.Drawing.Point(150, 40);
+            this.Controls.Add(textBox2);
+
+            label3 = new Label();
+            label3.Text = "Medidas (metros cúbicos)";
+            label3.Location = new System.Drawing.Point(10, 70);
+            this.Controls.Add(label3);
+
+            textBox3 = new TextBox();
+            textBox3.Location = new System.Drawing.Point(150, 70);
+            this.Controls.Add(textBox3);
+
+            label4 = new Label();
+            label4.Text = "Descrição";
+            label4.Location = new System.Drawing.Point(10, 100);
+            this.Controls.Add(label4);
+
+            textBox4 = new TextBox();
+            textBox4.Location = new System.Drawing.Point(150, 100);
+            this.Controls.Add(textBox4);
+
+            label5 = new Label();
+            label5.Text = "Tipo de Material";
+            label5.Location = new System.Drawing.Point(10, 130);
+            this.Controls.Add(label5);
+
+            textBox5 = new TextBox();
+            textBox5.Location = new System.Drawing.Point(150, 130);
+            this.Controls.Add(textBox5);
+
+            label6 = new Label();
+            label6.Text = "Valor de Compra";
+            label6.Location = new System.Drawing.Point(10, 160);
+            this.Controls.Add(label6);
+
+            textBox6 = new TextBox();
+            textBox6.Location = new System.Drawing.Point(150, 160);
+            this.Controls.Add(textBox6);
+
+            label7 = new Label();
+            label7.Text = "Valor de Venda";
+            label7.Location = new System.Drawing.Point(10, 190);
+            this.Controls.Add(label7);
+
+            textBox7 = new TextBox();
+            textBox7.Location = new System.Drawing.Point(150, 190);
+            this.Controls.Add(textBox7);
+
+            label8 = new Label();
+            label8.Text = "Pedreira";
+            label8.Location = new System.Drawing.Point(10, 220);
+            this.Controls.Add(label8);
+
+            textBox8 = new TextBox();
+            textBox8.Location = new System.Drawing.Point(150, 220);
+            this.Controls.Add(textBox8);
+
+            
+            Button cadastrarBlocoButton = new Button();
+            cadastrarBlocoButton.Text = "Cadastrar Bloco";
+            cadastrarBlocoButton.Location = new System.Drawing.Point(10, 250);
+            cadastrarBlocoButton.Click += CadastrarBlocoButton_Click;
+            this.Controls.Add(cadastrarBlocoButton);
+
+            Button listarBlocosButton = new Button();
+            listarBlocosButton.Text = "Listar Blocos";
+            listarBlocosButton.Location = new System.Drawing.Point(150, 250);
+            listarBlocosButton.Click += ListarBlocosButton_Click;
+            this.Controls.Add(listarBlocosButton);
+
+            Button buscarPorCodigoButton = new Button();
+            buscarPorCodigoButton.Text = "Buscar Bloco por Código";
+            buscarPorCodigoButton.Location = new System.Drawing.Point(10, 280);
+            buscarPorCodigoButton.Click += BuscarPorCodigoButton_Click;
+            this.Controls.Add(buscarPorCodigoButton);
+
+            Button listarPorPedreiraButton = new Button();
+            listarPorPedreiraButton.Text = "Listar Blocos por Pedreira";
+            listarPorPedreiraButton.Location = new System.Drawing.Point(150, 280);
+            listarPorPedreiraButton.Click += ListarPorPedreiraButton_Click;
+            this.Controls.Add(listarPorPedreiraButton);
+
+            Button salvarEmArquivoButton = new Button();
+            salvarEmArquivoButton.Text = "Salvar em Arquivo";
+            salvarEmArquivoButton.Location = new System.Drawing.Point(10, 310);
+            salvarEmArquivoButton.Click += SalvarEmArquivoButton_Click;
+            this.Controls.Add(salvarEmArquivoButton);
+
+           
+        }
+
+        private void CadastrarBlocoButton_Click(object sender, EventArgs e)
+        {
+            Bloco bloco = new Bloco
+            {
+                Codigo = PreencherEspacos(textBox1.Text, 80),
+                Numero = PreencherEspacos(textBox2.Text, 60),
+                Medidas = PreencherEspacos(textBox3.Text, 50),
+                Descricao = PreencherEspacos(textBox4.Text, 80),
+                TipoMaterial = PreencherEspacos(textBox5.Text, 80),
+                ValorCompra = PreencherEspacos(textBox6.Text, 80),
+                ValorVenda = PreencherEspacos(textBox7.Text, 80),
+                Pedreira = PreencherEspacos(textBox8.Text, 80)
+            };
+
+            blocos.Add(bloco);
+            LimparCampos();
+            MessageBox.Show("Bloco cadastrado com sucesso!");
+         
+        }
+
+        private void ListarBlocosButton_Click(object sender, EventArgs e)
+        {
+            string blocosText = "";
+            foreach (var bloco in blocos)
+            {
+                blocosText += $"Código: {bloco.Codigo}\nNúmero: {bloco.Numero}\nMedidas: {bloco.Medidas}\nDescrição: {bloco.Descricao}\nTipo Material: {bloco.TipoMaterial}\nValor Compra: {bloco.ValorCompra}\nValor Venda: {bloco.ValorVenda}\nPedreira: {bloco.Pedreira}\n\n";
+            }
+
+            MessageBox.Show(blocosText);
+        }
+
+        private void BuscarPorCodigoButton_Click(object sender, EventArgs e)
+        {
+            string codigo = textBox1.Text;
+            Bloco bloco = blocos.Find(b => b.Codigo.Trim() == codigo.Trim());
+
+            if (bloco != null)
+            {
+                MessageBox.Show($"Código: {bloco.Codigo}\nNúmero: {bloco.Numero}\nMedidas: {bloco.Medidas}\nDescrição: {bloco.Descricao}\nTipo Material: {bloco.TipoMaterial}\nValor Compra: {bloco.ValorCompra}\nValor Venda: {bloco.ValorVenda}\nPedreira: {bloco.Pedreira}");
+            }
+            else
+            {
+                MessageBox.Show("Bloco não encontrado.");
+            }
+        }
+
+        private void ListarPorPedreiraButton_Click(object sender, EventArgs e)
+        {
+            string pedreira = textBox8.Text;
+            string blocosPedreiraText = "";
+            List<Bloco> blocosPedreira = blocos.FindAll(b => b.Pedreira.Trim() == pedreira.Trim());
+
+            foreach (var bloco in blocosPedreira)
+            {
+                blocosPedreiraText += $"Código: {bloco.Codigo}\nNúmero: {bloco.Numero}\nMedidas: {bloco.Medidas}\nDescrição: {bloco.Descricao}\nTipo Material: {bloco.TipoMaterial}\nValor Compra: {bloco.ValorCompra}\nValor Venda: {bloco.ValorVenda}\nPedreira: {bloco.Pedreira}\n\n";
+            }
+
+            MessageBox.Show(blocosPedreiraText);
+        }
+
+        private void SalvarEmArquivoButton_Click(object sender, EventArgs e)
+        {
+            using (StreamWriter file = File.CreateText("blocos.txt"))
+            {
+                string jsonString = JsonSerializer.Serialize(blocos);
+
+                new StreamWriter(@"c:\temp\arquivo.txt",true);
+            }
+
+            MessageBox.Show("Blocos salvos no arquivo 'blocos.txt'.");
+        }
+
+        private void LimparCampos()
+        {
+            textBox1.Clear();
+            textBox2.Clear();
+            textBox3.Clear();
+            textBox4.Clear();
+            textBox5.Clear();
+            textBox6.Clear();
+            textBox7.Clear();
+            textBox8.Clear();
+        }
+
+        private string PreencherEspacos(string texto, int tamanho)
+        {
+            if (texto.Length < tamanho)
+            {
+                return texto.PadRight(tamanho);
+            }
+            else if (texto.Length > tamanho)
+            {
+                return texto.Substring(0, tamanho);
+            }
+            return texto;
+        }
+
+    }
+}
